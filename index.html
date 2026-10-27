@@ -6,22 +6,14 @@
   <title>Smart Toren IoT Hybrid</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
-
-  <!-- Kontrol demo (CSS-only): memilih skenario level air & mode -->
-  <input type="radio" name="skenario" id="s-low" class="ctl">
-  <input type="radio" name="skenario" id="s-mid" class="ctl" checked>
-  <input type="radio" name="skenario" id="s-full" class="ctl">
-  <input type="radio" name="mode" id="m-auto" class="ctl" checked>
-  <input type="radio" name="mode" id="m-on" class="ctl">
-  <input type="radio" name="mode" id="m-off" class="ctl">
+<body class="mode-auto">
 
   <header class="topbar">
     <div>
       <h1>💧 Smart Toren <span>IoT Hybrid</span></h1>
       <p>Monitoring &amp; kontrol pompa air berbasis ESP32 + HC-SR04</p>
     </div>
-    <div class="badge badge-ok"><i class="dot"></i> ESP32 Online</div>
+    <div class="badge badge-ok"><i class="dot"></i> Mode Simulasi</div>
   </header>
 
   <main class="grid">
@@ -30,22 +22,13 @@
     <section class="card tank-card">
       <h2>Level Air Toren</h2>
       <div class="tank">
-        <div class="water"><div class="wave"></div></div>
+        <div class="water" id="water"><div class="wave"></div></div>
         <div class="mark m95"><span>95% Pompa MATI</span></div>
         <div class="mark m25"><span>25% Pompa HIDUP</span></div>
       </div>
-      <div class="big-num">
-        <span class="v v-low">18<small>%</small></span>
-        <span class="v v-mid">60<small>%</small></span>
-        <span class="v v-full">97<small>%</small></span>
-      </div>
-      <p class="muted">
-        Jarak sensor ke air:
-        <b class="v v-low">102 cm</b><b class="v v-mid">60 cm</b><b class="v v-full">23 cm</b>
-      </p>
-      <div class="status-chip chip-low v v-low">⚠ Air Rendah</div>
-      <div class="status-chip chip-mid v v-mid">● Air Normal</div>
-      <div class="status-chip chip-full v v-full">✔ Air Penuh</div>
+      <div class="big-num"><span id="persen">60.0</span><small>%</small></div>
+      <p class="muted">Jarak sensor ke air: <b id="jarak">60 cm</b></p>
+      <div class="status-chip" id="chip">● Air Normal</div>
     </section>
 
     <!-- Status pompa & mode -->
@@ -57,18 +40,18 @@
       </div>
       <div class="pump pump-on">
         <div class="pump-icon">⏻</div>
-        <div><strong>ON (NYALA)</strong><small>Relay LOW · GPIO 26</small></div>
+        <div><strong>ON (NYALA)</strong><small>Relay LOW · GPIO 26 · air naik</small></div>
       </div>
 
       <h2 class="sub">Mode Kontrol</h2>
-      <div class="segmented">
-        <label for="m-auto">AUTO</label>
-        <label for="m-on">ON</label>
-        <label for="m-off">OFF</label>
+      <div class="segmented" id="modeBtns">
+        <button type="button" data-cmd="AUTO" class="active">AUTO</button>
+        <button type="button" data-cmd="ON">ON</button>
+        <button type="button" data-cmd="OFF">OFF</button>
       </div>
       <p class="muted small">
-        Perintah serial: <code>AUTO</code>, <code>ON</code>, <code>OFF</code>.
-        Mode saat ini: <b class="mode-txt t-auto">OTOMATIS</b><b class="mode-txt t-manual">MANUAL</b>
+        Setara perintah serial <code>AUTO</code>, <code>ON</code>, <code>OFF</code>.
+        Mode saat ini: <b id="modeTxt">OTOMATIS</b>
       </p>
     </section>
 
@@ -88,12 +71,27 @@
     <!-- Log serial -->
     <section class="card wide">
       <h2>Serial Monitor</h2>
-      <pre class="log"><span class="l-auto-low">[AUTO-ACTION] Air &lt; 25%! Pompa Hidup Otomatis.
-</span><span class="l-auto-full">[AUTO-ACTION] Air Penuh (&gt;=95%)! Pompa Mati Otomatis.
-</span><span class="l-on">[APLIKASI HP] Tombol ON Ditekan -&gt; Pompa NYALA (Manual)
-</span><span class="l-off">[APLIKASI HP] Tombol OFF Ditekan -&gt; Pompa MATI (Manual)
-</span><span class="l-auto">[APLIKASI HP] Mode diubah ke: OTOMATIS
-</span>Air: <span class="v v-low">18.0</span><span class="v v-mid">60.0</span><span class="v v-full">97.0</span>% | Mode: <span class="mode-txt t-auto">OTOMATIS</span><span class="mode-txt t-manual">MANUAL  </span> | Pompa: <span class="pump-txt-on">ON (NYALA)</span><span class="pump-txt-off">OFF (MATI)</span><span class="cursor">▍</span></pre>
+      <pre class="log" id="log"></pre>
+    </section>
+
+    <!-- Simulasi -->
+    <section class="card wide demo">
+      <h2>Simulasi</h2>
+      <p class="muted small">
+        Pompa ON → air naik. Pompa OFF → air turun pelan (dipakai). Geser slider untuk mengatur level air secara langsung.
+      </p>
+      <div class="sim">
+        <label>Level air: <b id="sliderVal">60</b>%
+          <input type="range" id="slider" min="0" max="100" value="60">
+        </label>
+        <label>Kecepatan simulasi
+          <select id="speed">
+            <option value="1">Normal (1x)</option>
+            <option value="3" selected>Cepat (3x)</option>
+            <option value="8">Sangat cepat (8x)</option>
+          </select>
+        </label>
+      </div>
     </section>
 
     <!-- Pin / wiring -->
@@ -115,22 +113,12 @@
       </div>
     </section>
 
-    <!-- Pemilih skenario demo -->
-    <section class="card wide demo">
-      <h2>Simulasi Tampilan</h2>
-      <p class="muted small">Pilih kondisi level air untuk melihat perubahan tampilan dashboard (tanpa JavaScript).</p>
-      <div class="segmented">
-        <label for="s-low">Air Rendah</label>
-        <label for="s-mid">Air Sedang</label>
-        <label for="s-full">Air Penuh</label>
-      </div>
-    </section>
-
   </main>
 
   <footer>
-    Smart Toren IoT Hybrid · ESP32 DevKit V1 · Tampilan statis untuk demo/dokumentasi
+    Smart Toren IoT Hybrid · ESP32 DevKit V1 · Data simulasi, bukan pembacaan sensor langsung
   </footer>
 
+  <script src="script.js"></script>
 </body>
 </html>
