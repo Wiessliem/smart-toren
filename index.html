@@ -1,124 +1,197 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Smart Toren IoT Hybrid</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smart Toren: Simulasi IoT Monitoring Air</title>
+<meta name="description" content="Simulasi interaktif proyek Wokwi Smart Toren: ESP32, sensor ultrasonik HC-SR04, dan relay pompa. Logika firmware berjalan langsung di browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
 </head>
-<body class="mode-auto">
+<body>
 
-  <header class="topbar">
-    <div>
-      <h1>Smart Toren <span>IoT Hybrid</span></h1>
-      <p>Monitoring &amp; kontrol pompa air berbasis ESP32 + HC-SR04</p>
+<a class="skip" href="#demo">Lewati ke simulasi</a>
+
+<header>
+  <div class="wrap baris-header">
+    <span class="wordmark">Smart Toren</span>
+    <nav aria-label="Navigasi utama">
+      <a href="#demo">Demo</a>
+      <a href="#cara-kerja">Cara kerja</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<section class="hero wrap">
+  <h1>Toren yang mengisi dirinya sendiri</h1>
+  <p class="lede">
+    Sensor ultrasonik mengukur tinggi air di dalam toren. ESP32 menghitung persentase isi,
+    menyalakan pompa saat air hampir habis, dan mematikannya saat hampir penuh.
+    Halaman ini menjalankan ulang logika firmware yang sama persis, langsung di browser.
+  </p>
+  <a class="btn" href="#demo">Coba simulasinya</a>
+</section>
+
+<section id="demo" class="wrap">
+  <h2>Simulasi langsung</h2>
+  <p class="intro-bagian">
+    Semua logika di panel ini sama dengan yang berjalan di ESP32: rumus konversi jarak,
+    ambang 25% dan 95%, serta perintah AUTO, ON, dan OFF yang di firmware dikirim lewat serial.
+    Geser level air atau kirim perintah untuk melihat respons sistem.
+  </p>
+
+  <div class="grid-demo">
+    <figure class="panel panel-tangki">
+      <svg class="tangki" viewBox="0 0 220 300" role="img" aria-labelledby="tangki-judul">
+        <title id="tangki-judul">Visual tangki toren dengan level air</title>
+        <g class="sensor" aria-hidden="true">
+          <rect x="83" y="6" width="54" height="24" rx="5"/>
+          <circle cx="98" cy="18" r="6.5"/>
+          <circle cx="122" cy="18" r="6.5"/>
+        </g>
+        <text class="cap-sensor" x="110" y="44" text-anchor="middle">HC-SR04</text>
+        <rect class="dinding" x="30" y="52" width="160" height="230" rx="10"/>
+        <defs>
+          <clipPath id="potong">
+            <rect x="35" y="57" width="150" height="220" rx="7"/>
+          </clipPath>
+        </defs>
+        <g clip-path="url(#potong)">
+          <rect id="air" x="35" y="222" width="150" height="55"/>
+          <line id="inlet" class="inlet" x1="110" y1="57" x2="110" y2="222"/>
+        </g>
+        <line class="ambang-halo" x1="35" y1="68" x2="185" y2="68"/>
+        <line class="ambang-halo" x1="35" y1="222" x2="185" y2="222"/>
+        <line class="ambang" x1="35" y1="68" x2="185" y2="68"/>
+        <line class="ambang" x1="35" y1="222" x2="185" y2="222"/>
+        <text class="cap-ambang" x="193" y="72">95%</text>
+        <text class="cap-ambang" x="193" y="226">25%</text>
+      </svg>
+      <figcaption class="cap-tangki">garis putus: ambang mati 95% dan ambang nyala 25%</figcaption>
+    </figure>
+
+    <div class="kolom-kanan">
+      <div class="panel panel-baca">
+        <div class="angka-besar"><span id="persen">31,0</span><span class="satuan">%</span></div>
+        <dl class="bacaan">
+          <div><dt>Jarak ke permukaan</dt><dd><span id="jarak">89</span> cm</dd></div>
+          <div><dt>Mode</dt><dd><span id="mode" class="chip">OTOMATIS</span></dd></div>
+          <div><dt>Pompa</dt><dd><span class="dot" id="dot" aria-hidden="true"></span><span id="pompa">MATI</span></dd></div>
+        </dl>
+      </div>
+
+      <div class="panel panel-kontrol">
+        <h3>Perintah</h3>
+        <p class="cap-kontrol">Sama seperti perintah serial yang dikirim aplikasi ke ESP32.</p>
+        <div class="baris-tombol" role="group" aria-label="Perintah ke pompa">
+          <button type="button" id="btn-auto">AUTO</button>
+          <button type="button" id="btn-on">ON</button>
+          <button type="button" id="btn-off">OFF</button>
+        </div>
+        <label class="label-slider" for="level">Atur level air (cm dari sensor)</label>
+        <input type="range" id="level" min="20" max="120" step="1" value="89">
+        <p class="cap-kontrol">Geser untuk mengubah bacaan sensor: 20 cm = penuh, 120 cm = kosong.</p>
+      </div>
     </div>
-    <div class="badge badge-ok"><i class="dot"></i> Mode Simulasi</div>
-  </header>
+  </div>
 
-  <main class="grid">
+  <div class="panel panel-log">
+    <h3>Monitor serial <span class="cap-log">115200 baud</span></h3>
+    <div id="log" class="log" role="log" aria-label="Keluaran monitor serial"></div>
+  </div>
+</section>
 
-    <!-- Level air -->
-    <section class="card tank-card">
-      <h2>Level Air Toren</h2>
-      <div class="tank">
-        <div class="water" id="water"><div class="wave"></div></div>
-        <div class="mark m95"><span>95% Pompa MATI</span></div>
-        <div class="mark m25"><span>25% Pompa HIDUP</span></div>
-      </div>
-      <div class="big-num"><span id="persen">60.0</span><small>%</small></div>
-      <p class="muted">Jarak sensor ke air: <b id="jarak">60 cm</b></p>
-      <div class="status-chip" id="chip">● Air Normal</div>
-    </section>
+<section id="cara-kerja" class="wrap">
+  <h2>Cara kerja</h2>
+  <p class="intro-bagian">
+    HC-SR04 menembakkan pulsa ultrasonik ke permukaan air dan mengukur waktu pantulnya.
+    Makin penuh toren, makin kecil jarak yang terbaca: 20 cm berarti penuh, 120 cm berarti kosong.
+  </p>
 
-    <!-- Status pompa & mode -->
-    <section class="card">
-      <h2>Status Pompa</h2>
-      <div class="pump pump-off">
-        <div class="pump-icon">⏻</div>
-        <div><strong>OFF (MATI)</strong><small>Relay HIGH · GPIO 26</small></div>
-      </div>
-      <div class="pump pump-on">
-        <div class="pump-icon">⏻</div>
-        <div><strong>ON (NYALA)</strong><small>Relay LOW · GPIO 26 · air naik</small></div>
-      </div>
+  <ol class="alur">
+    <li>
+      <span class="nama-tahap">HC-SR04</span>
+      <span class="ket-tahap">Mengukur jarak ke permukaan. TRIG di pin D5, ECHO di pin D18.</span>
+    </li>
+    <li>
+      <span class="nama-tahap">ESP32</span>
+      <span class="ket-tahap">Mengubah jarak menjadi persentase isi, lalu menjalankan logika ambang.</span>
+    </li>
+    <li>
+      <span class="nama-tahap">Relay</span>
+      <span class="ket-tahap">Saklar elektronik untuk pompa, dikendalikan dari pin D26.</span>
+    </li>
+    <li>
+      <span class="nama-tahap">Pompa</span>
+      <span class="ket-tahap">Mengisi toren dari sumber air sampai ambang penuh tercapai.</span>
+    </li>
+  </ol>
 
-      <h2 class="sub">Mode Kontrol</h2>
-      <div class="segmented" id="modeBtns">
-        <button type="button" data-cmd="AUTO" class="active">AUTO</button>
-        <button type="button" data-cmd="ON">ON</button>
-        <button type="button" data-cmd="OFF">OFF</button>
-      </div>
-      <p class="muted small">
-        Setara perintah serial <code>AUTO</code>, <code>ON</code>, <code>OFF</code>.
-        Mode saat ini: <b id="modeTxt">OTOMATIS</b>
+  <div class="grid-kerja">
+    <div>
+      <h3>Konversi jarak ke persentase</h3>
+      <p>Firmware menghitung isi toren dengan satu baris:</p>
+      <pre><code>persentase = (1 - (jarak - 20) / (120 - 20)) * 100</code></pre>
+      <p>
+        Di mode otomatis, pompa menyala begitu isi turun di bawah 25% dan baru berhenti
+        setelah mencapai 95%. Dua ambang yang berjauhan ini disebut histeresis: tanpanya,
+        pompa akan hidup-mati berulang kali di sekitar satu angka dan cepat rusak.
       </p>
-    </section>
-
-    <!-- Parameter -->
-    <section class="card">
-      <h2>Parameter Sistem</h2>
-      <ul class="kv">
-        <li><span>Jarak toren kosong</span><b>120 cm</b></li>
-        <li><span>Jarak toren penuh</span><b>20 cm</b></li>
-        <li><span>Pompa ON otomatis</span><b>&lt; 25%</b></li>
-        <li><span>Pompa OFF otomatis</span><b>≥ 95%</b></li>
-        <li><span>Baud rate serial</span><b>115200</b></li>
-        <li><span>Interval baca</span><b>2 detik</b></li>
-      </ul>
-    </section>
-
-    <!-- Log serial -->
-    <section class="card wide">
-      <h2>Serial Monitor</h2>
-      <pre class="log" id="log"></pre>
-    </section>
-
-    <!-- Simulasi -->
-    <section class="card wide demo">
-      <h2>Simulasi</h2>
-      <p class="muted small">
-        Pompa ON → air naik. Pompa OFF → air turun pelan (dipakai). Geser slider untuk mengatur level air secara langsung.
+      <div class="skala-ambang" aria-hidden="true">
+        <span class="tanda" style="left:25%">nyala 25%</span>
+        <span class="tanda" style="left:95%">mati 95%</span>
+      </div>
+      <p>
+        Relay bekerja active-low: firmware menulis <code>LOW</code> ke pin D26 untuk menyalakan
+        pompa dan <code>HIGH</code> untuk mematikannya, persis seperti pada
+        <code>digitalWrite(RELAY_PIN, LOW)</code> di kode.
       </p>
-      <div class="sim">
-        <label>Level air: <b id="sliderVal">60</b>%
-          <input type="range" id="slider" min="0" max="100" value="60">
-        </label>
-        <label>Kecepatan simulasi
-          <select id="speed">
-            <option value="1">Normal (1x)</option>
-            <option value="3" selected>Cepat (3x)</option>
-            <option value="8">Sangat cepat (8x)</option>
-          </select>
-        </label>
-      </div>
-    </section>
+      <p>
+        Pada pemasangan nyata, perintah AUTO/ON/OFF dan data level biasanya dikirim lewat
+        WiFi (MQTT atau HTTP) ke aplikasi. Di proyek Wokwi ini jalurnya disimulasikan lewat
+        monitor serial; logika kontrolnya identik.
+      </p>
+    </div>
 
-    <!-- Pin / wiring -->
-    <section class="card wide">
-      <h2>Wiring Komponen</h2>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Komponen</th><th>Pin Komponen</th><th>Pin ESP32</th><th>Fungsi</th></tr></thead>
-          <tbody>
-            <tr><td>HC-SR04</td><td>VCC</td><td>5V</td><td>Daya sensor</td></tr>
-            <tr><td>HC-SR04</td><td>GND</td><td>GND</td><td>Ground</td></tr>
-            <tr><td>HC-SR04</td><td>TRIG</td><td>GPIO 5</td><td>Pemicu pulsa ultrasonik</td></tr>
-            <tr><td>HC-SR04</td><td>ECHO</td><td>GPIO 18</td><td>Penerima pantulan</td></tr>
-            <tr><td>Relay</td><td>VCC</td><td>5V</td><td>Daya modul relay</td></tr>
-            <tr><td>Relay</td><td>GND</td><td>GND</td><td>Ground</td></tr>
-            <tr><td>Relay</td><td>IN</td><td>GPIO 26</td><td>Kontrol pompa (aktif LOW)</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+    <div>
+      <h3>Sambungan kabel</h3>
+      <table>
+        <thead>
+          <tr><th>Pin ESP32</th><th>Terhubung ke</th><th>Kabel</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>5V</td><td>HC-SR04 VCC</td><td><span class="kabel merah"></span>merah</td></tr>
+          <tr><td>GND</td><td>HC-SR04 GND</td><td><span class="kabel hitam"></span>hitam</td></tr>
+          <tr><td>D5</td><td>HC-SR04 TRIG</td><td><span class="kabel hijau"></span>hijau</td></tr>
+          <tr><td>D18</td><td>HC-SR04 ECHO</td><td><span class="kabel biru"></span>biru</td></tr>
+          <tr><td>5V</td><td>Relay VCC</td><td><span class="kabel merah"></span>merah</td></tr>
+          <tr><td>GND</td><td>Relay GND</td><td><span class="kabel hitam"></span>hitam</td></tr>
+          <tr><td>D26</td><td>Relay IN</td><td><span class="kabel oranye"></span>oranye</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
 
-  </main>
+</main>
 
-  <footer>
-    Smart Toren IoT Hybrid · ESP32 DevKit V1 · Data simulasi, bukan pembacaan sensor langsung
-  </footer>
+<footer>
+  <div class="wrap">
+    <p>
+      Smart Toren. Dibangun dari proyek <a href="https://wokwi.com">Wokwi</a> berisi
+      ESP32 DevKit, sensor HC-SR04, dan modul relay, dengan firmware <code>hc-sr04.ino</code>.
+    </p>
+    <p>
+      Kode sumber: <a href="https://github.com/Wiessliem/smart-watertank">github.com/Wiessliem/smart-watertank</a>.
+      Situs ini sepenuhnya statis dan dihosting di GitHub Pages; tidak ada data yang dikirim ke mana-mana.
+    </p>
+  </div>
+</footer>
 
-  <script src="script.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

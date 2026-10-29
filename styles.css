@@ -1,0 +1,324 @@
+:root {
+  --bg: #f3f6f8;
+  --surface: #ffffff;
+  --ink: #152630;
+  --muted: #46586a;
+  --line: #d7e0e6;
+  --water: #0e7490;
+  --water-deep: #155e75;
+  --water-tint: #e1f1f6;
+  --water-line: #7dd3fc;
+  --amber: #92400e;
+  --log-ink: #d9ecf2;
+  --r: 10px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  line-height: 1.55;
+}
+
+.wrap { max-width: 1020px; margin-inline: auto; padding-inline: 20px; }
+
+.skip {
+  position: absolute;
+  left: 12px;
+  top: -48px;
+  background: var(--ink);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 6px;
+  z-index: 10;
+}
+.skip:focus { top: 12px; }
+
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+.baris-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 60px;
+}
+.wordmark {
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: -0.01em;
+}
+nav { display: flex; gap: 4px; }
+nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 10px 14px;
+  border-radius: 8px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+nav a:hover { color: var(--water-deep); background: var(--water-tint); }
+
+h1 {
+  font-size: clamp(2rem, 4.5vw + 0.5rem, 3.1rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 0 0 20px;
+  max-width: 16ch;
+}
+h2 {
+  font-size: clamp(1.4rem, 2vw + 0.6rem, 1.9rem);
+  letter-spacing: -0.015em;
+  margin: 0 0 12px;
+}
+h3 { font-size: 1.05rem; margin: 0 0 10px; }
+p { margin: 0 0 14px; }
+
+.hero { padding-block: 72px 56px; }
+.lede {
+  font-size: 1.15rem;
+  color: var(--muted);
+  max-width: 58ch;
+  margin-bottom: 28px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 22px;
+  background: var(--water);
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--r);
+}
+.btn:hover { background: var(--water-deep); }
+
+section { padding-block: 40px; }
+.intro-bagian { color: var(--muted); max-width: 62ch; margin-bottom: 28px; }
+code {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.92em;
+  background: var(--water-tint);
+  padding: 1px 6px;
+  border-radius: 5px;
+}
+pre {
+  background: var(--ink);
+  color: var(--log-ink);
+  padding: 14px 18px;
+  border-radius: var(--r);
+  overflow-x: auto;
+}
+pre code { background: none; padding: 0; color: inherit; }
+
+/* --- panel demo --- */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 20px;
+}
+.grid-demo { display: grid; gap: 20px; }
+
+.panel-tangki { margin: 0; text-align: center; }
+.tangki { width: min(100%, 240px); height: auto; }
+.sensor rect { fill: var(--ink); }
+.sensor circle { fill: var(--surface); }
+.cap-sensor { font-size: 10px; fill: var(--muted); font-family: "IBM Plex Mono", monospace; }
+.dinding { fill: none; stroke: var(--ink); stroke-width: 3; }
+#air { fill: var(--water); }
+.inlet {
+  stroke: var(--water-deep);
+  stroke-width: 4;
+  stroke-dasharray: 6 8;
+  display: none;
+}
+.inlet.on { display: inline; animation: alir 0.7s linear infinite; }
+@keyframes alir { to { stroke-dashoffset: -14; } }
+@media (prefers-reduced-motion: reduce) {
+  .inlet.on { animation: none; }
+}
+.ambang-halo { stroke: var(--surface); stroke-width: 4.5; stroke-dasharray: 7 6; }
+.ambang { stroke: var(--amber); stroke-width: 2; stroke-dasharray: 7 6; }
+.cap-ambang { font-size: 11px; fill: var(--amber); font-family: "IBM Plex Mono", monospace; }
+.cap-tangki { font-size: 0.85rem; color: var(--muted); margin-top: 6px; }
+
+.kolom-kanan { display: grid; gap: 20px; align-content: start; }
+
+.angka-besar {
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 500;
+  font-size: clamp(3rem, 8vw, 4.2rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin-bottom: 18px;
+}
+.satuan { font-size: 0.45em; color: var(--muted); margin-left: 4px; }
+.bacaan { margin: 0; display: grid; gap: 12px; }
+.bacaan > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+.bacaan dt { color: var(--muted); font-size: 0.9rem; }
+.bacaan dd { margin: 0; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.chip {
+  background: var(--water-tint);
+  color: var(--water-deep);
+  padding: 3px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+.chip.manual { background: #f4e8d8; color: var(--amber); }
+.dot { width: 11px; height: 11px; border-radius: 50%; background: #64748b; }
+.dot.on { background: var(--amber); }
+
+.baris-tombol { display: flex; gap: 10px; margin: 10px 0 22px; }
+.baris-tombol button {
+  flex: 1;
+  min-height: 44px;
+  font: inherit;
+  font-weight: 600;
+  font-family: "IBM Plex Mono", monospace;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  cursor: pointer;
+}
+.baris-tombol button:hover { border-color: var(--water); color: var(--water-deep); }
+.baris-tombol button:active { background: var(--water-tint); }
+.label-slider { display: block; font-weight: 600; margin-bottom: 6px; }
+input[type="range"] {
+  width: 100%;
+  height: 44px;
+  accent-color: var(--water);
+  cursor: pointer;
+}
+.cap-kontrol { font-size: 0.85rem; color: var(--muted); margin: 0; }
+
+.panel-log {
+  margin-top: 20px;
+  background: var(--ink);
+  border-color: var(--ink);
+}
+.panel-log h3 { color: #fff; }
+.cap-log { font-weight: 400; font-size: 0.8rem; color: #8fb5c4; margin-left: 6px; }
+.log {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.82rem;
+  color: var(--log-ink);
+  max-height: 220px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+.log .aksi { color: var(--water-line); }
+
+/* --- cara kerja --- */
+.alur {
+  list-style: none;
+  counter-reset: tahap;
+  margin: 0 0 36px;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+.alur li {
+  counter-increment: tahap;
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--water);
+  border-radius: var(--r);
+  padding: 16px 18px 14px;
+}
+.alur li::before {
+  content: counter(tahap);
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: var(--water-deep);
+  display: block;
+  margin-bottom: 6px;
+}
+.nama-tahap { display: block; font-weight: 700; margin-bottom: 4px; }
+.ket-tahap { display: block; font-size: 0.9rem; color: var(--muted); }
+
+.grid-kerja { display: grid; gap: 28px; }
+
+.skala-ambang {
+  position: relative;
+  height: 34px;
+  margin: 18px 0 8px;
+  border-bottom: 1px solid var(--line);
+}
+.skala-ambang .tanda {
+  position: absolute;
+  top: 0;
+  height: 22px;
+  border-left: 2px dashed var(--amber);
+  padding-left: 6px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.75rem;
+  color: var(--amber);
+  white-space: nowrap;
+}
+.skala-ambang .tanda:last-child {
+  transform: translateX(-100%);
+  border-left: none;
+  border-right: 2px dashed var(--amber);
+  padding: 0 6px 0 0;
+}
+
+table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: 0.92rem; }
+th { background: var(--bg); font-weight: 600; }
+tbody tr:last-child td { border-bottom: none; }
+.kabel { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 8px; vertical-align: -1px; }
+.kabel.merah { background: #d64545; }
+.kabel.hitam { background: #222; }
+.kabel.hijau { background: #3f9e4d; }
+.kabel.biru { background: #3b7dd8; }
+.kabel.oranye { background: #e8853d; }
+
+footer {
+  margin-top: 40px;
+  border-top: 1px solid var(--line);
+  padding-block: 28px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+footer p { margin-bottom: 6px; }
+footer a { color: var(--water-deep); }
+
+:focus-visible {
+  outline: 3px solid var(--water);
+  outline-offset: 2px;
+}
+::selection { background: var(--water-tint); }
+
+@media (min-width: 720px) {
+  .grid-demo { grid-template-columns: 300px 1fr; align-items: start; }
+  .alur { grid-template-columns: repeat(4, 1fr); }
+  .alur li:not(:last-child)::after {
+    content: "\2192";
+    position: absolute;
+    right: -13px;
+    top: 38%;
+    color: var(--muted);
+    font-size: 1rem;
+  }
+  .grid-kerja { grid-template-columns: 1.15fr 1fr; gap: 48px; }
+  .hero { padding-block: 96px 64px; }
+}
