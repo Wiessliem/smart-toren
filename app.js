@@ -102,6 +102,6 @@ el.level.addEventListener("input", () => {
   jarak = Number(el.level.value);
 });
 
-catat(`[SISTEM] Smart Toren siap. Level awal ${kePersenID(persenDari(jarak))}% (${jarak} cm).`);
+catat(`[SISTEM] Smart Watertank siap. Level awal ${kePersenID(persenDari(jarak))}% (${jarak} cm).`);
 render();
 requestAnimationFrame(tick);
