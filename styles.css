@@ -80,27 +80,6 @@ h2 {
 h3 { font-size: 1.05rem; margin: 0 0 10px; }
 p { margin: 0 0 14px; }
 
-.hero { padding-block: 72px 56px; }
-.lede {
-  font-size: 1.15rem;
-  color: var(--muted);
-  max-width: 58ch;
-  margin-bottom: 28px;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 10px 22px;
-  background: var(--water);
-  color: #fff;
-  font-weight: 600;
-  text-decoration: none;
-  border-radius: var(--r);
-}
-.btn:hover { background: var(--water-deep); }
-
 section { padding-block: 40px; }
 .intro-bagian { color: var(--muted); max-width: 62ch; margin-bottom: 28px; }
 code {
@@ -320,5 +299,4 @@ footer a { color: var(--water-deep); }
     font-size: 1rem;
   }
   .grid-kerja { grid-template-columns: 1.15fr 1fr; gap: 48px; }
-  .hero { padding-block: 96px 64px; }
 }
